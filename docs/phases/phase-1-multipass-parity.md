@@ -7,26 +7,22 @@
 
 ### 1.1 regenesis-agent shell prototype
 
-- Create `scripts/regenesis-agent.sh` implementing [first-boot-sequence.md](../host-regenesis/first-boot-sequence.md)
-- Idempotency marker `/var/lib/regenesis/configured`
+- `scripts/regenesis-agent` — phases per [06-regenesis-agent-spec.md](../plan/06-regenesis-agent-spec.md)
+- Config: `/etc/regenesis/config.env` (shell-sourceable)
 
 ### 1.2 Multipass integration
 
-- Option A: Replace `runcmd` tail in `cylon-images/multipass/cloud-init.yaml` with regenesis-agent install + invoke
-- Option B: Keep cloud-init packages; only delegate steps 4–10 to agent
-
-Prefer **Option B** initially — smaller cloud-init diff.
+- Minimal `cloud-init.yaml` (users + token + release-pin)
+- `build-base` calls `just -f cylon-regenesis provision-base`
 
 ### 1.3 Hub registration
 
-- Implement or wire `POST /v2/register` in resurrection-hub (tiffany) if missing
-- regenesis-agent writes `/etc/cylon/host.env` from template + node id
+- `provision-node` / `just provision-fleet` — `POST /v2/register` + health
 
-### 1.4 Parity verification
+### 1.4 Tiffany integration
 
-- Run [cloud-init-parity.md](../host-regenesis/cloud-init-parity.md) checklist on all 3 nodes
-- `just resurrection-nodes-status` green
-- `just resurrection-nodes-smoke-cylon-rootfs-ubuntu` passes
+- `just resurrection-nodes-finish-regenesis` → `cylon-regenesis just provision-fleet`
+- `resurrection-nodes-deploy-host-daemon` aliases finish-regenesis
 
 ### 1.5 Rust CLI (optional in Phase 1)
 

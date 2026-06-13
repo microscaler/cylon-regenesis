@@ -1,0 +1,387 @@
+#!/usr/bin/env bash
+# regenesis-agent — idempotent resurrection-node provisioner (REG-AGENT-01)
+set -euo pipefail
+
+VERSION="0.1.0"
+CONFIG="${REGENESIS_CONFIG:-/etc/regenesis/config.env}"
+STATE_DIR="/var/lib/regenesis"
+PHASE_DIR="${STATE_DIR}/phases"
+CONFIGURED_MARKER="${STATE_DIR}/configured"
+LOG_TAG="regenesis-agent"
+
+# Defaults (overridden by config.env)
+REGENESIS_PROVISIONING="${REGENESIS_PROVISIONING:-node}"
+REGENESIS_NODE_ID="${REGENESIS_NODE_ID:-resurrection-node-1}"
+REGENESIS_HUB_API="${REGENESIS_HUB_API:-http://127.0.0.1:14000}"
+REGENESIS_GRPC_ENDPOINT="${REGENESIS_GRPC_ENDPOINT:-https://127.0.0.1:50052}"
+REGENESIS_RELEASE_PIN="${REGENESIS_RELEASE_PIN:-latest}"
+REGENESIS_GITHUB_TOKEN_FILE="${REGENESIS_GITHUB_TOKEN_FILE:-/etc/cylon/github-token}"
+REGENESIS_RELEASE_PIN_FILE="${REGENESIS_RELEASE_PIN_FILE:-/etc/cylon/release-pin}"
+REGENESIS_GUEST_KERNEL_IMAGE="${REGENESIS_GUEST_KERNEL_IMAGE:-ghcr.io/microscaler/cylon-kernel:6.1.102}"
+REGENESIS_GUEST_KERNEL_DEST="${REGENESIS_GUEST_KERNEL_DEST:-/home/cylon/cylon-images/vmlinux}"
+REGENESIS_FIRECRACKER_VERSION="${REGENESIS_FIRECRACKER_VERSION:-1.10.1}"
+REGENESIS_CRANE_VERSION="${REGENESIS_CRANE_VERSION:-v0.20.2}"
+REGENESIS_MEMORY_MB="${REGENESIS_MEMORY_MB:-8192}"
+REGENESIS_VCPU="${REGENESIS_VCPU:-8}"
+REGENESIS_CERTS_DIR="${REGENESIS_CERTS_DIR:-/etc/cylon/certs}"
+REGENESIS_RUST_LOG="${REGENESIS_RUST_LOG:-info}"
+REGENESIS_FORCE="${REGENESIS_FORCE:-0}"
+REGENESIS_DRY_RUN="${REGENESIS_DRY_RUN:-0}"
+REGENESIS_ONLY_PHASE="${REGENESIS_ONLY_PHASE:-}"
+
+CYLON_REPO="${CYLON_REPO:-microscaler/tiffany}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CYLON_HOST_UNIT="${REGENESIS_CYLON_HOST_UNIT:-${SCRIPT_DIR}/../systemd/cylon-host.service}"
+
+log() {
+  echo "[${LOG_TAG}] $*"
+}
+
+die() {
+  echo "[${LOG_TAG}] ERROR: $*" >&2
+  exit 1
+}
+
+run() {
+  if [[ "${REGENESIS_DRY_RUN}" == "1" ]]; then
+    log "dry-run: $*"
+    return 0
+  fi
+  "$@"
+}
+
+load_config() {
+  if [[ -f "${CONFIG}" ]]; then
+    # shellcheck disable=SC1090
+    set -a && source "${CONFIG}" && set +a
+  fi
+  if [[ -f "${REGENESIS_RELEASE_PIN_FILE}" ]]; then
+    local pin
+    pin="$(tr -d '[:space:]' < "${REGENESIS_RELEASE_PIN_FILE}")"
+    if [[ -n "${pin}" ]]; then
+      REGENESIS_RELEASE_PIN="${pin}"
+    fi
+  fi
+}
+
+phase_done() {
+  [[ "${REGENESIS_FORCE}" == "1" ]] && return 1
+  [[ -f "${PHASE_DIR}/$1.done" ]]
+}
+
+mark_phase() {
+  mkdir -p "${PHASE_DIR}"
+  date -Iseconds > "${PHASE_DIR}/$1.done"
+  log "phase complete: $1"
+}
+
+should_run_phase() {
+  local phase="$1"
+  if [[ -n "${REGENESIS_ONLY_PHASE}" && "${REGENESIS_ONLY_PHASE}" != "${phase}" ]]; then
+    return 1
+  fi
+  if phase_done "${phase}"; then
+    log "skip phase (done): ${phase}"
+    return 1
+  fi
+  return 0
+}
+
+run_phase() {
+  local phase="$1"
+  should_run_phase "${phase}" || return 0
+  log "phase start: ${phase}"
+  "phase_${phase}"
+  mark_phase "${phase}"
+}
+
+phase_preflight() {
+  if [[ "${EUID}" -ne 0 ]]; then
+    die "must run as root (EUID=${EUID})"
+  fi
+  [[ -e /dev/kvm ]] || die "NO_KVM: /dev/kvm missing"
+  command -v curl >/dev/null || die "NO_CURL"
+  if ! ip route show default >/dev/null 2>&1; then
+    log "warn: no default route yet"
+  fi
+}
+
+phase_packages() {
+  export DEBIAN_FRONTEND=noninteractive
+  run apt-get update -qq
+  run apt-get install -y --no-install-recommends \
+    qemu-kvm cpu-checker acl curl jq iproute2 ca-certificates libssl3
+}
+
+phase_user_kvm() {
+  if ! id cylon &>/dev/null; then
+    run useradd -m -s /bin/bash -G sudo,kvm cylon
+  else
+    run usermod -aG sudo,kvm cylon 2>/dev/null || true
+  fi
+  echo 'cylon ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/cylon
+  chmod 0440 /etc/sudoers.d/cylon
+  run setfacl -m u:cylon:rw /dev/kvm
+  run mkdir -p /home/cylon/cylon-images
+  run chown -R cylon:cylon /home/cylon
+}
+
+phase_firecracker() {
+  local ver="${REGENESIS_FIRECRACKER_VERSION}"
+  local fc="/usr/bin/firecracker"
+  if [[ -x "${fc}" ]] && "${fc}" --version 2>&1 | grep -q "${ver}"; then
+    log "firecracker ${ver} already installed"
+    return 0
+  fi
+  local tmp tgz dir
+  tmp="$(mktemp -d)"
+  tgz="${tmp}/firecracker.tgz"
+  curl -fsSL -o "${tgz}" \
+    "https://github.com/firecracker-microvm/firecracker/releases/download/v${ver}/firecracker-v${ver}-x86_64.tgz"
+  tar -xzf "${tgz}" -C "${tmp}"
+  dir="${tmp}/release-v${ver}-x86_64"
+  run install -m 0755 "${dir}/firecracker-v${ver}-x86_64" /usr/bin/firecracker
+  run install -m 0755 "${dir}/jailer-v${ver}-x86_64" /usr/bin/jailer
+  rm -rf "${tmp}"
+}
+
+phase_guest_kernel() {
+  local dest="${REGENESIS_GUEST_KERNEL_DEST}"
+  local hash_file="${STATE_DIR}/guest_kernel.sha256"
+  run mkdir -p "$(dirname "${dest}")"
+  if ! command -v crane >/dev/null; then
+    local tmp
+    tmp="$(mktemp -d)"
+    curl -fsSL -o "${tmp}/crane.tgz" \
+      "https://github.com/google/go-containerregistry/releases/download/${REGENESIS_CRANE_VERSION}/go-containerregistry_Linux_x86_64.tar.gz"
+    run tar -xzf "${tmp}/crane.tgz" -C /usr/local/bin crane
+    rm -rf "${tmp}"
+  fi
+  if [[ -f "${REGENESIS_GITHUB_TOKEN_FILE}" ]]; then
+    crane auth login ghcr.io -u token -p "$(tr -d '[:space:]' < "${REGENESIS_GITHUB_TOKEN_FILE}")" \
+      >/dev/null 2>&1 || log "warn: ghcr login failed (public pull may still work)"
+  fi
+  local tmp_out="${dest}.tmp.$$"
+  crane export "${REGENESIS_GUEST_KERNEL_IMAGE}" - | tar -xOf - vmlinux > "${tmp_out}"
+  local new_hash
+  new_hash="$(sha256sum "${tmp_out}" | awk '{print $1}')"
+  if [[ -f "${dest}" && -f "${hash_file}" ]]; then
+    local old_hash
+    old_hash="$(cat "${hash_file}")"
+    if [[ "${old_hash}" == "${new_hash}" ]]; then
+      rm -f "${tmp_out}"
+      log "guest kernel unchanged"
+      return 0
+    fi
+  fi
+  run mv "${tmp_out}" "${dest}"
+  echo "${new_hash}" > "${hash_file}"
+  run chown cylon:cylon "${dest}"
+  run chmod 644 "${dest}"
+}
+
+phase_cylon_binary() {
+  [[ -f "${REGENESIS_GITHUB_TOKEN_FILE}" ]] || die "TOKEN_MISSING: ${REGENESIS_GITHUB_TOKEN_FILE}"
+  local token pin release_url binary_url sha_url tmp expected actual
+  token="$(tr -d '[:space:]' < "${REGENESIS_GITHUB_TOKEN_FILE}")"
+  [[ -n "${token}" ]] || die "Empty github token file"
+  pin="${REGENESIS_RELEASE_PIN}"
+  if [[ "${pin}" == "latest" ]]; then
+    release_url="https://api.github.com/repos/${CYLON_REPO}/releases/latest"
+  else
+    release_url="https://api.github.com/repos/${CYLON_REPO}/releases/tags/${pin}"
+  fi
+  tmp="$(mktemp)"
+  curl -fsSL \
+    -H "Authorization: Bearer ${token}" \
+    -H "Accept: application/vnd.github+json" \
+    "${release_url}" > "${tmp}.json"
+  binary_url="$(jq -r '.assets[] | select(.name=="cylon-linux-x86_64") | .url' < "${tmp}.json")"
+  sha_url="$(jq -r '.assets[] | select(.name=="cylon-linux-x86_64.sha256") | .url' < "${tmp}.json")"
+  [[ -n "${binary_url}" && "${binary_url}" != "null" ]] || die "Release asset cylon-linux-x86_64 not found (${pin})"
+  curl -fsSL \
+    -H "Authorization: Bearer ${token}" \
+    -H "Accept: application/octet-stream" -L \
+    -o "${tmp}" "${binary_url}"
+  curl -fsSL \
+    -H "Authorization: Bearer ${token}" \
+    -H "Accept: application/octet-stream" -L \
+    -o "${tmp}.sha256" "${sha_url}"
+  expected="$(awk '{print $1}' "${tmp}.sha256")"
+  actual="$(sha256sum "${tmp}" | awk '{print $1}')"
+  [[ "${expected}" == "${actual}" ]] || die "CHECKSUM_MISMATCH for cylon-linux-x86_64"
+  run install -o root -g root -m 0755 "${tmp}" /usr/local/bin/cylon
+  rm -f "${tmp}" "${tmp}.json" "${tmp}.sha256"
+}
+
+phase_systemd_install() {
+  local unit_src="${CYLON_HOST_UNIT}"
+  if [[ ! -f "${unit_src}" ]]; then
+    unit_src="/usr/local/share/regenesis/cylon-host.service"
+  fi
+  [[ -f "${unit_src}" ]] || die "cylon-host.service not found (set REGENESIS_CYLON_HOST_UNIT)"
+  run install -m 0644 "${unit_src}" /etc/systemd/system/cylon-host.service
+  run systemctl daemon-reload
+}
+
+phase_host_env() {
+  run mkdir -p /etc/cylon
+  cat > /etc/cylon/host.env <<EOF
+CYLON_NODE_ID=${REGENESIS_NODE_ID}
+CYLON_GRPC_ENDPOINT=${REGENESIS_GRPC_ENDPOINT}
+HUB_API_ENDPOINT=${REGENESIS_HUB_API}
+CYLON_CERTS_DIR=${REGENESIS_CERTS_DIR}
+CYLON_AVAILABLE_MEMORY_MB=${REGENESIS_MEMORY_MB}
+CYLON_AVAILABLE_VCPU=${REGENESIS_VCPU}
+RUST_LOG=${REGENESIS_RUST_LOG}
+EOF
+  run chmod 0644 /etc/cylon/host.env
+}
+
+phase_certs() {
+  if [[ ! -d "${REGENESIS_CERTS_DIR}" ]]; then
+    die "CERTS_DIR missing: ${REGENESIS_CERTS_DIR}"
+  fi
+  for f in ca.crt server.crt server.key; do
+    [[ -f "${REGENESIS_CERTS_DIR}/${f}" ]] || die "missing cert: ${REGENESIS_CERTS_DIR}/${f}"
+  done
+  log "certs OK in ${REGENESIS_CERTS_DIR}"
+}
+
+phase_systemd_enable() {
+  run systemctl enable cylon-host.service
+  run systemctl restart cylon-host.service
+}
+
+phase_register() {
+  local tmp attempt
+  tmp="$(mktemp)"
+  cat > "${tmp}" <<EOF
+{
+  "node_id": "${REGENESIS_NODE_ID}",
+  "grpc_endpoint": "${REGENESIS_GRPC_ENDPOINT}",
+  "available_memory_mb": ${REGENESIS_MEMORY_MB},
+  "available_vcpu": ${REGENESIS_VCPU}
+}
+EOF
+  for attempt in 1 2 3 4 5; do
+    if curl -sf -X POST "${REGENESIS_HUB_API}/v2/register" \
+      -H 'Content-Type: application/json' \
+      -d @"${tmp}"; then
+      echo
+      rm -f "${tmp}"
+      return 0
+    fi
+    log "register attempt ${attempt} failed, retrying..."
+    sleep $((attempt * 2))
+  done
+  rm -f "${tmp}"
+  die "register failed after retries"
+}
+
+phase_health() {
+  for _ in $(seq 1 30); do
+    if curl -sf http://127.0.0.1:8080/health >/dev/null; then
+      log "cylon-host health OK"
+      return 0
+    fi
+    sleep 2
+  done
+  die "health check timeout"
+}
+
+phase_finalize() {
+  mkdir -p "${STATE_DIR}"
+  date -Iseconds > "${CONFIGURED_MARKER}"
+  echo "${VERSION}" > "${STATE_DIR}/version"
+  log "configured marker written"
+}
+
+usage() {
+  cat <<EOF
+regenesis-agent ${VERSION}
+
+Usage: regenesis-agent [OPTIONS]
+
+Options:
+  --config PATH       Config env file (default /etc/regenesis/config.env)
+  --provisioning MODE base|node  Override REGENESIS_PROVISIONING
+  --phase NAME        Run a single phase only
+  --force             Re-run phases even if marked done
+  --dry-run           Print commands without executing
+  -h, --help
+
+Phases (base):  preflight packages user_kvm firecracker guest_kernel cylon_binary systemd_install
+Phases (node):  host_env certs systemd_enable register health finalize
+EOF
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --config)
+        CONFIG="$2"
+        shift 2
+        ;;
+      --provisioning)
+        REGENESIS_PROVISIONING="$2"
+        shift 2
+        ;;
+      --phase)
+        REGENESIS_ONLY_PHASE="$2"
+        shift 2
+        ;;
+      --force)
+        REGENESIS_FORCE=1
+        shift
+        ;;
+      --dry-run)
+        REGENESIS_DRY_RUN=1
+        shift
+        ;;
+      -h | --help)
+        usage
+        exit 0
+        ;;
+      *)
+        die "unknown argument: $1"
+        ;;
+    esac
+  done
+}
+
+main() {
+  parse_args "$@"
+  load_config
+
+  if [[ -f "${CONFIGURED_MARKER}" && "${REGENESIS_FORCE}" != "1" && "${REGENESIS_PROVISIONING}" == "node" ]]; then
+    log "already configured ($(cat "${CONFIGURED_MARKER}")); use --force to re-run"
+    exit 0
+  fi
+
+  log "provisioning=${REGENESIS_PROVISIONING} node=${REGENESIS_NODE_ID} hub=${REGENESIS_HUB_API}"
+
+  local base_phases=(
+    preflight packages user_kvm firecracker guest_kernel cylon_binary systemd_install
+  )
+  local node_phases=(host_env certs systemd_enable register health finalize)
+
+  case "${REGENESIS_PROVISIONING}" in
+    base)
+      for p in "${base_phases[@]}"; do run_phase "${p}"; done
+      ;;
+    node)
+      for p in "${node_phases[@]}"; do run_phase "${p}"; done
+      ;;
+    full)
+      for p in "${base_phases[@]}" "${node_phases[@]}"; do run_phase "${p}"; done
+      ;;
+    *)
+      die "invalid REGENESIS_PROVISIONING: ${REGENESIS_PROVISIONING}"
+      ;;
+  esac
+
+  log "done"
+}
+
+main "$@"

@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck just
+
+      - name: Verify VERSION matches regenesis-agent
+        run: |
+          set -euo pipefail
+          file_ver="$(tr -d '[:space:]' < VERSION)"
+          script_ver="$(grep '^VERSION=' scripts/regenesis-agent | sed -n 's/^VERSION="\(.*\)"$/\1/p')"
+          if [[ "${file_ver}" != "${script_ver}" ]]; then
+            echo "VERSION file (${file_ver}) != scripts/regenesis-agent (${script_ver})" >&2
+            exit 1
+          fi
+          echo "VERSION OK: ${file_ver}"
+
+      - name: ShellCheck scripts
+        run: |
+          shellcheck scripts/regenesis-agent scripts/provision-node.sh
+
+      - name: Validate justfile
+        run: just --list
+
+      - name: Verify systemd units
+        run: systemd-analyze verify systemd/*.service
+
+      - name: Smoke test regenesis-agent CLI
+        run: |
+          file_ver="$(tr -d '[:space:]' < VERSION)"
+          bash scripts/regenesis-agent --help | grep -q "regenesis-agent ${file_ver}"
+
+      - name: Validate base config env
+        run: |
+          set -euo pipefail
+          # shellcheck disable=SC1091
+          set -a && source config/regenesis-base.env && set +a
+          test -n "${REGENESIS_PROVISIONING:-}"

@@ -1,0 +1,21 @@
+[Unit]
+Description=Cylon host daemon (Firecracker hypervisor — resurrection node)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cylon
+Group=cylon
+SupplementaryGroups=kvm
+WorkingDirectory=/home/cylon
+EnvironmentFile=-/etc/cylon/host.env
+ExecStart=/usr/local/bin/cylon
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cylon-host
+
+[Install]
+WantedBy=multi-user.target

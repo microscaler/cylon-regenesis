@@ -1,0 +1,17 @@
+[Unit]
+Description=Cylon Regenesis first-boot agent (node provisioning)
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/regenesis/configured
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=REGENESIS_CONFIG=/etc/regenesis/config.env
+ExecStart=/usr/local/bin/regenesis-agent
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=regenesis-agent
+
+[Install]
+WantedBy=multi-user.target
