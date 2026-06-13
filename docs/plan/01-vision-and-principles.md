@@ -14,7 +14,7 @@ It replaces Liquidmetal + Flintlock for CRP without upstream governance constrai
 
 ### T1 — Agents are not Kubernetes nodes
 
-MicroVMs run `tiffany-runtime` + `mayfly-guest`. They never join a customer K8s cluster. Scheduling optimizes **agent density**, not pod CNI.
+MicroVMs run `cylon-runtime` + `mayfly-guest`. They never join a customer K8s cluster. Scheduling optimizes **agent density**, not pod CNI.
 
 ### T2 — Two provisioning planes
 
@@ -42,7 +42,7 @@ Every agent operation must trace: Portal → Hub → Raft → gRPC → Firecrack
 
 ### T6 — Minimize scope per repo
 
-See [ADR-0004](../../adrs/ADR-0004-repo-boundaries.md). regenesis-hub migrates here; cylon host stays in tiffany until a future split is justified.
+See [ADR-0004](../../adrs/ADR-0004-repo-boundaries.md). regenesis-hub migrates here; cylon host stays in cylon until a future split is justified.
 
 ## Non-goals (repeated for planners)
 

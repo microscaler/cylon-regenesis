@@ -75,7 +75,7 @@ POST 10 agents → verify spread across 3 nodes ±1.
 | Env | Use |
 |---|---|
 | macOS + ms02 SSH | primary dev |
-| Kind tiffany + Multipass | integration |
+| Kind cylon + Multipass | integration |
 | DCops Kind + lab metal | Phase 2+ |
 | Production shadow | Phase 5 canary |
 

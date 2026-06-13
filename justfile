@@ -37,11 +37,11 @@ provision-base vm="resurrection-node-base":
 	multipass exec "${vm}" -- bash -lc 'test -x /usr/local/bin/cylon && firecracker --version && test -f /home/cylon/cylon-images/vmlinux'
 	echo "Base provisioning OK on ${vm}"
 
-# Generate node config.env from tiffany resurrection-node-N.env and provision worker.
+# Generate node config.env from cylon resurrection-node-N.env and provision worker.
 provision-node vm node_index:
 	"{{scripts_dir}}/provision-node.sh" "{{vm}}" "{{node_index}}"
 
-# Provision resurrection-node-1..3 from tiffany env files.
+# Provision resurrection-node-1..3 from cylon env files.
 provision-fleet:
 	just provision-node resurrection-node-1 1
 	just provision-node resurrection-node-2 2

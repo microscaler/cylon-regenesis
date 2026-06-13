@@ -6,14 +6,14 @@
 
 ## Context
 
-Cylon Regenesis is the Microscaler-owned distributed microVM control plane and host lifecycle system. Without explicit boundaries it will overlap `tiffany`, `cylon-images`, and `DCops`.
+Cylon Regenesis is the Microscaler-owned distributed microVM control plane and host lifecycle system. Without explicit boundaries it will overlap `cylon`, `cylon-images`, and `DCops`.
 
 ## Decision
 
 ### In scope
 
 1. **Host regenesis** — provision and reprovision **resurrection nodes** (Cylon host OS + daemon) via iPXE/DCops.
-2. **Control plane** — Raft-backed hub: agent registry, scheduling, API v2, fault tolerance (migrated from `tiffany/crates/resurrection-hub`).
+2. **Control plane** — Raft-backed hub: agent registry, scheduling, API v2, fault tolerance (migrated from `cylon/crates/resurrection-hub`).
 3. **Integration contracts** — Hub ↔ Cylon host ↔ DCops BootIntent/BootProfile ↔ storage (S3/object_store).
 4. **Operational docs** — runbooks, phase plans, Flintlock-requirements traceability.
 
@@ -25,7 +25,7 @@ Cylon Regenesis is the Microscaler-owned distributed microVM control plane and h
 | Tinkerbell / Hegel / Hook | DCops + standard iPXE — see ADR-0003 |
 | CAPMVM / agents as K8s nodes | CRP model — agents are Firecracker guests |
 | Guest rootfs/kernel CI | Owned by `cylon-images` |
-| Agent LLM runtime | Owned by `tiffany` (`engine`, `cylon-skills`) |
+| Agent LLM runtime | Owned by `cylon` (`engine`, `cylon-skills`) |
 | Talos cluster lifecycle | Owned by `DCops` Phase 2+ (CAPI) |
 | Generic multi-tenant cloud | Single-tenant CRP first |
 

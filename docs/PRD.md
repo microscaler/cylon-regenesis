@@ -2,7 +2,7 @@
 
 **Owner:** Platform / FAR  
 **Status:** Active — Phase 0 (documentation)  
-**Related:** [ARCHITECTURE.md](ARCHITECTURE.md), [tiffany CRP PRD](../../tiffany/docs/CYLON-RESURRECTION-PLATFORM-PRD.md), [tiffany RESURRECTION-HUB-PRD](../../tiffany/docs/RESURRECTION-HUB-PRD.md)
+**Related:** [ARCHITECTURE.md](ARCHITECTURE.md), [cylon CRP PRD](../../cylon/docs/CYLON-RESURRECTION-PLATFORM-PRD.md), [cylon RESURRECTION-HUB-PRD](../../cylon/docs/RESURRECTION-HUB-PRD.md)
 
 ## 1. Vision
 
@@ -45,7 +45,7 @@ Deliver a **Microscaler-owned distributed microVM platform** that replaces Flint
 
 | ID | Requirement | Acceptance |
 |---|---|---|
-| FR-3.1 | `cylon.proto` source in tiffany | regenesis-hub compiles against same revision |
+| FR-3.1 | `cylon.proto` source in cylon | regenesis-hub compiles against same revision |
 | FR-3.2 | GHCR guest artifacts | Host pulls `cylon-kernel` + hub specifies rootfs ref |
 | FR-3.3 | DCops IPClaim for node mgmt IP | No hard-coded resurrection-node IPs in Git |
 
@@ -65,7 +65,7 @@ Deliver a **Microscaler-owned distributed microVM platform** that replaces Flint
 | **0** | [phase-0](phases/phase-0-docs-and-contracts.md) | Docs, ADRs, contracts | This repo README + ARCHITECTURE approved |
 | **1** | [phase-1](phases/phase-1-multipass-parity.md) | regenesis-agent on Multipass | Agent replaces cloud-init runcmd block |
 | **2** | [phase-2](phases/phase-2-dcops-ipxe-dev.md) | Lab bare metal iPXE | 1 node boots via DCops only |
-| **3** | [phase-3](phases/phase-3-control-plane-extraction.md) | Hub crate move | Tiffany depends on regenesis-hub crate |
+| **3** | [phase-3](phases/phase-3-control-plane-extraction.md) | Hub crate move | Cylon depends on regenesis-hub crate |
 | **4** | [phase-4](phases/phase-4-fault-tolerance.md) | Production resilience | Chaos tests pass PRD 2.x |
 | **5** | [phase-5](phases/phase-5-production-bare-metal.md) | DC rollout | N nodes locked in DCops |
 

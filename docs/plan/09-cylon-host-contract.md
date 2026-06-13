@@ -1,6 +1,6 @@
 # 09 — Cylon host contract
 
-**Owner repo:** `tiffany/crates/cylon`  
+**Owner repo:** `cylon/crates/cylon`  
 **regenesis-hub depends on this contract — do not fork proto here long-term.**
 
 ## Responsibilities split
@@ -62,7 +62,7 @@ When hub unreachable 30s:
 3. Target resumes VM
 4. Source deletes VM
 
-**Status:** stub — epic in tiffany, tracked REG-HOST-4.x.
+**Status:** stub — epic in cylon, tracked REG-HOST-4.x.
 
 ## Health endpoints
 

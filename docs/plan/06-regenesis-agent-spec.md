@@ -167,7 +167,7 @@ Skip if sha256 matches `/var/lib/regenesis/guest_kernel.sha256`.
 Port of `install-cylon-from-release` from cloud-init:
 
 1. Read `release_pin` from config
-2. GitHub API `microscaler/tiffany` releases
+2. GitHub API `microscaler/cylon` releases
 3. Download `cylon-linux-x86_64` + `.sha256` via API asset URLs
 4. Verify hash
 5. `install -m 755 → /usr/local/bin/cylon`
@@ -182,7 +182,7 @@ Install files:
 
 | File | Source (Phase 1) |
 |---|---|
-| `/etc/systemd/system/cylon-host.service` | embed template or copy from tiffany deployment-configuration |
+| `/etc/systemd/system/cylon-host.service` | embed template or copy from cylon deployment-configuration |
 | `/etc/cylon/host.env` | generated from config |
 
 Template `host.env`:
@@ -206,7 +206,7 @@ systemctl start cylon-host.service
 
 ## Phase: certs
 
-Phase 1 (Multipass): copy from tiffany decrypted bundle via existing `just resurrection-nodes-deploy-host-daemon` **or** embed dev certs in cloud-init merge.
+Phase 1 (Multipass): copy from cylon decrypted bundle via existing `just resurrection-nodes-deploy-host-daemon` **or** embed dev certs in cloud-init merge.
 
 Phase 2+: hub registration returns cert bundle (future) OR pre-seeded per-site CA.
 

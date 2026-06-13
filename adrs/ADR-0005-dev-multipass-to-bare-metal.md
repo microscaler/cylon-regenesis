@@ -26,7 +26,7 @@ ms02 development uses **Multipass** resurrection nodes (`cylon-images/multipass/
 - User `cylon`, group `kvm`, `/dev/kvm` ACL
 - Firecracker 1.10.x + jailer
 - `/home/cylon/cylon-images/vmlinux` from **GHCR** (`cylon-kernel:6.1.102`)
-- `/usr/local/bin/cylon` from Tiffany GitHub Releases
+- `/usr/local/bin/cylon` from Cylon GitHub Releases
 - `cylon-host.service` + `/etc/cylon/host.env`
 - mTLS client material for Hub gRPC
 

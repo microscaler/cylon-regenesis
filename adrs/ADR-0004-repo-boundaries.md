@@ -18,32 +18,32 @@ CRP spans five repos. Without boundaries, hub logic, host daemon, images, and da
                 │ gRPC mTLS                   │ BootIntent CRDs
                 ▼                             ▼
 ┌───────────────────────────┐     ┌─────────────────────────────┐
-│ tiffany/crates/cylon      │     │ DCops                        │
+│ cylon/crates/cylon      │     │ DCops                        │
 │ Host daemon on node       │     │ iPXE, IPAM, Kea, NetBox      │
 │ Firecracker, OCI, vsock   │     │ BootProfile / BootIntent     │
 └───────────────┬───────────┘     └─────────────────────────────┘
                 │ pulls guest OCI
                 ▼
 ┌───────────────────────────┐     ┌─────────────────────────────┐
-│ cylon-images/container/   │     │ tiffany (remainder)          │
+│ cylon-images/container/   │     │ cylon (remainder)          │
 │ GHCR kernel + rootfs      │     │ engine, portal, platform     │
 └───────────────────────────┘     └─────────────────────────────┘
 ```
 
 | Artifact | Canonical repo | Notes |
 |---|---|---|
-| Hub Raft state, `/v2/agents`, scheduling | **cylon-regenesis** (migrate from `tiffany/crates/resurrection-hub`) | OpenRaft + axum |
-| `CylonService` host implementation | **tiffany/crates/cylon** | Stays — heavy Firecracker integration |
-| `cylon.proto` | **tiffany** (source of truth) | regenesis-hub depends on published crate or path dep |
+| Hub Raft state, `/v2/agents`, scheduling | **cylon-regenesis** (migrate from `cylon/crates/resurrection-hub`) | OpenRaft + axum |
+| `CylonService` host implementation | **cylon/crates/cylon** | Stays — heavy Firecracker integration |
+| `cylon.proto` | **cylon** (source of truth) | regenesis-hub depends on published crate or path dep |
 | Guest `vmlinux` + rootfs OCI | **cylon-images** | GHCR |
 | Resurrection-node **host OS** netboot image | **cylon-regenesis** (build) + DCops (serve) | Not guest rootfs |
 | Multipass dev cloud-init | **cylon-images/multipass** until Phase 1 complete | Parity spec in regenesis docs |
-| Platform daemon, Postgres, portal | **tiffany** | Kind only |
+| Platform daemon, Postgres, portal | **cylon** | Kind only |
 | Operator Tilt/Kind | **cylon-local-infra** | |
 
 ## Migration rule
 
-Extract **resurrection-hub** to `cylon-regenesis/crates/regenesis-hub` in Phase 3. Tiffany retains a thin client or git submodule pointer until cutover. No duplicate hub implementations.
+Extract **resurrection-hub** to `cylon-regenesis/crates/regenesis-hub` in Phase 3. Cylon retains a thin client or git submodule pointer until cutover. No duplicate hub implementations.
 
 ## Consequences
 

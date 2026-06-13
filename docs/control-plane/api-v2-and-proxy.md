@@ -59,5 +59,5 @@ Future: `cylon-regenesis/openapi/regenesis-v2.yaml` generated from axum handlers
 
 ## References
 
-- `tiffany/crates/resurrection-hub/src/api.rs`
-- `tiffany/crates/cylon/proto/cylon.proto`
+- `cylon/crates/resurrection-hub/src/api.rs`
+- `cylon/crates/cylon/proto/cylon.proto`

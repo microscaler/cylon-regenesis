@@ -11,14 +11,14 @@ This document indexes the **excruciating-detail** planning set. Read in order fo
 | # | Document | What you get |
 |---|---|---|
 | 01 | [Vision & principles](01-vision-and-principles.md) | Why regenesis exists, design tenets |
-| 02 | [Gap analysis — current state](02-gap-analysis-current-state.md) | What tiffany already implements vs missing |
+| 02 | [Gap analysis — current state](02-gap-analysis-current-state.md) | What cylon already implements vs missing |
 | 03 | [Data model](03-data-model.md) | Every entity, field, index, tombstone rules |
 | 04 | [API contract](04-api-contract.md) | HTTP `/v2`, gRPC, error codes, examples |
 | 05 | [State machines](05-state-machines.md) | Agent, node, boot intent transitions |
 | 06 | [regenesis-agent spec](06-regenesis-agent-spec.md) | First-boot program — step-by-step |
 | 07 | [iPXE + DCops spec](07-ipxe-dcops-spec.md) | Boot chain, CRDs, HTTP layout, blockers |
 | 08 | [Control plane internals](08-control-plane-internals.md) | Raft, allocator, loops — mapped to code |
-| 09 | [Cylon host contract](09-cylon-host-contract.md) | What stays in tiffany/cylon |
+| 09 | [Cylon host contract](09-cylon-host-contract.md) | What stays in cylon/crates/cylon |
 | 10 | [Security model](10-security-model.md) | mTLS, tokens, trust boundaries |
 | 11 | [Testing & chaos](11-testing-and-chaos.md) | Test matrix, harness, acceptance |
 | 12 | [Configuration reference](12-configuration-reference.md) | Every env var, file path, default |

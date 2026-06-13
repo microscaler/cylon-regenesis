@@ -5,7 +5,7 @@ Sibling repos under `~/Workspace/microscaler/` (ms02 NFS) and how they connect t
 ## Dependency graph
 
 ```
-                    tiffany (portal, engine, cylon host)
+                    cylon (portal, engine, cylon host)
                          │
            ┌─────────────┼─────────────┐
            ▼             ▼             ▼
@@ -27,11 +27,11 @@ Sibling repos under `~/Workspace/microscaler/` (ms02 NFS) and how they connect t
 | iPXE scripts + host OS image spec | Platform Postgres / portal |
 | Hub `/v2` OpenAPI spec | Talos/CAPI |
 
-**Consumers:** tiffany (spawns agents via hub URL), DCops (serves boot files).
+**Consumers:** cylon (spawns agents via hub URL), DCops (serves boot files).
 
 ---
 
-### tiffany
+### cylon
 
 | Path | Role |
 |---|---|
@@ -94,7 +94,7 @@ Sibling repos under `~/Workspace/microscaler/` (ms02 NFS) and how they connect t
 ```
 cylon-regenesis release tag
   ├── pins regenesis-agent version
-  ├── pins minimum cylon host release (tiffany tag)
+  ├── pins minimum cylon host release (cylon tag)
   ├── pins BootProfile image digest
   └── documents GHCR guest tags (from cylon-images CI)
 ```
@@ -103,9 +103,9 @@ cylon-regenesis release tag
 
 | Task | Repo |
 |---|---|
-| Fix Firecracker boot args | tiffany `crates/cylon` |
+| Fix Firecracker boot args | cylon `crates/cylon` |
 | Rebuild guest rootfs | cylon-images |
 | Add hub scheduler feature | cylon-regenesis (after Phase 3) |
 | New resurrection rack IP pool | DCops IPPool CRD |
 | New iPXE script | cylon-regenesis `ipxe/` |
-| Portal spawn agent UX | tiffany ui + hub client |
+| Portal spawn agent UX | Cylon ui + hub client |

@@ -1,6 +1,6 @@
 # Control plane — regenesis hub
 
-Central **Raft-backed** orchestrator for CRP. Migrates from `tiffany/crates/resurrection-hub`.
+Central **Raft-backed** orchestrator for CRP. Migrates from `cylon/crates/resurrection-hub`.
 
 ## Responsibilities
 
@@ -32,7 +32,7 @@ Central **Raft-backed** orchestrator for CRP. Migrates from `tiffany/crates/resu
 
 | Phase | Form |
 |---|---|
-| Now | Kind pod `resurrection-hub:14000` (tiffany Tilt) |
+| Now | Kind pod `resurrection-hub:14000` (cylon Tilt) |
 | Phase 3+ | Container from cylon-regenesis CI |
 | Phase 5 | 3-node Raft cluster on mgmt hardware |
 

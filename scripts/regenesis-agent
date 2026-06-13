@@ -29,7 +29,7 @@ REGENESIS_FORCE="${REGENESIS_FORCE:-0}"
 REGENESIS_DRY_RUN="${REGENESIS_DRY_RUN:-0}"
 REGENESIS_ONLY_PHASE="${REGENESIS_ONLY_PHASE:-}"
 
-CYLON_REPO="${CYLON_REPO:-microscaler/tiffany}"
+CYLON_REPO="${CYLON_REPO:-microscaler/cylon}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CYLON_HOST_UNIT="${REGENESIS_CYLON_HOST_UNIT:-${SCRIPT_DIR}/../systemd/cylon-host.service}"
 

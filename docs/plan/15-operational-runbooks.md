@@ -26,7 +26,7 @@ cd ~/Workspace/microscaler/cylon-images/multipass
 just purge-base && just build-base
 cd ~/Workspace/microscaler/cylon-local-infra
 just resurrection-nodes-up
-cd ~/Workspace/microscaler/tiffany
+cd ~/Workspace/microscaler/cylon
 just resurrection-nodes-status
 ```
 
@@ -49,7 +49,7 @@ multipass exec resurrection-node-1 -- sudo iptables -D OUTPUT -d 192.168.1.189 -
 ## RB-04 Hub leader failure
 
 ```bash
-kubectl delete pod -l app=resurrection-hub -n tiffany
+kubectl delete pod -l app=resurrection-hub -n tiffany  # K8s namespace unchanged during repo rename
 # wait for new pod
 curl -sf http://127.0.0.1:14000/v2/agents  # via tilt forward
 ```
@@ -73,7 +73,7 @@ Verify sha256 on each node.
 ## RB-06 Cylon host binary upgrade
 
 ```bash
-cd ~/Workspace/microscaler/tiffany
+cd ~/Workspace/microscaler/cylon
 just resurrection-nodes-install-binary-from-release
 # or set /etc/cylon/release-pin=v0.1.1 and restart regenesis-agent phase cylon_binary
 ```

@@ -38,7 +38,7 @@
 | `server.crt` | each node | node gRPC server |
 | Raft peer certs | hub replicas | inter-hub |
 
-Dev source: `tiffany/deployment-configuration/profiles/dev/.certs`
+Dev source: `cylon/deployment-configuration/profiles/dev/.certs`
 
 Production: internal CA rotation runbook (TBD).
 

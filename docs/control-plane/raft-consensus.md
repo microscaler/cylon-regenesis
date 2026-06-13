@@ -14,7 +14,7 @@
 ## State machine entities
 
 ```rust
-// Conceptual — matches tiffany resurrection-hub evolution
+// Conceptual — matches cylon resurrection-hub evolution evolution
 
 CylonNode {
   id, address, status: Online|Offline|Draining,
@@ -67,7 +67,7 @@ Followers:
 | Snapshot storage | PVC or S3 object |
 | Recovery | Install snapshot + replay tail |
 
-Acceptance: hub memory/disk flat over 7-day soak ([RESURRECTION-HUB-PRD](../../tiffany/docs/RESURRECTION-HUB-PRD.md) 3.2).
+Acceptance: hub memory/disk flat over 7-day soak ([RESURRECTION-HUB-PRD](../../cylon/docs/RESURRECTION-HUB-PRD.md) 3.2).
 
 ## Testing
 
@@ -77,5 +77,5 @@ Acceptance: hub memory/disk flat over 7-day soak ([RESURRECTION-HUB-PRD](../../t
 
 ## References
 
-- `tiffany/crates/resurrection-hub/`
+- `cylon/crates/resurrection-hub/`
 - OpenRaft docs

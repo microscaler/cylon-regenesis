@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
-# Provision a single resurrection Multipass worker from tiffany env + certs.
+# Provision a single resurrection Multipass worker from cylon env + certs.
 set -euo pipefail
 
 vm="${1:?usage: provision-node.sh VM INDEX}"
 idx="${2:?usage: provision-node.sh VM INDEX}"
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-tiffany_env="${root}/../tiffany/deployment-configuration/profiles/dev/resurrection-node/resurrection-node-${idx}.env"
-certs_dir="${root}/../tiffany/deployment-configuration/profiles/dev/.certs"
+cylon_env="${root}/../cylon/deployment-configuration/profiles/dev/resurrection-node/resurrection-node-${idx}.env"
+certs_dir="${root}/../cylon/deployment-configuration/profiles/dev/.certs"
 
-if [[ ! -f "${tiffany_env}" ]]; then
-  echo "Missing ${tiffany_env}" >&2
+if [[ ! -f "${cylon_env}" ]]; then
+  echo "Missing ${cylon_env}" >&2
   exit 1
 fi
 
 # shellcheck disable=SC1090
-source "${tiffany_env}"
+source "${cylon_env}"
 rust_log="${RUST_LOG:-info}"
 
 cfg="$(mktemp)"

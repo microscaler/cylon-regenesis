@@ -1,6 +1,6 @@
 # Flintlock proposal → cylon-regenesis mapping
 
-Status key: **Done** (in tiffany today) | **Planned** (this repo) | **DCops** | **N/A**
+Status key: **Done** (in cylon today) | **Planned** (this repo) | **DCops** | **N/A**
 
 | # | Flintlock proposal | CRP component | Status | Doc |
 |---|---|---|---|---|
@@ -8,7 +8,7 @@ Status key: **Done** (in tiffany today) | **Planned** (this repo) | **DCops** | 
 | 02 | Distributed scheduling / bidding | Hub allocator | Done → migrate | [scheduling](../control-plane/scheduling-and-bidding.md) |
 | 03 | Unified API + proxy | Hub `/v2` + gRPC proxy | Done → migrate | [api-v2](../control-plane/api-v2-and-proxy.md) |
 | 04 | Host failure handling | Hub offline + agent reschedule | Planned | [fault-tolerance](../control-plane/fault-tolerance.md) |
-| 05 | Detached host GC | Cylon host watchdog | Planned (tiffany) | [fault-tolerance](../control-plane/fault-tolerance.md) |
+| 05 | Detached host GC | Cylon host watchdog | Planned (cylon) | [fault-tolerance](../control-plane/fault-tolerance.md) |
 | 06 | Host regenesis / PXE | regenesis-agent + DCops iPXE | **Planned** | [ipxe-provisioning](../host-regenesis/ipxe-provisioning.md) |
 | 07 | Network partition / split-brain | Hub quorum + node fence | Planned | [fault-tolerance](../control-plane/fault-tolerance.md) |
 | 08 | Leader scheduling bottleneck | Batch bid queue | Planned | [scheduling](../control-plane/scheduling-and-bidding.md) |
@@ -26,11 +26,11 @@ Status key: **Done** (in tiffany today) | **Planned** (this repo) | **DCops** | 
 |---|---|
 | Agent skills in guest rootfs | cylon-images |
 | CryoSleep / S3 resurrection semantics | regenesis-hub + cylon host |
-| VSock egress proxy with billing | tiffany cylon |
-| mayfly-guest orchestration | tiffany + mayfly |
+| VSock egress proxy with billing | cylon host |
+| mayfly-guest orchestration | cylon + mayfly |
 | GHCR guest artifacts | cylon-images |
 
-## Tiffany RESURRECTION-HUB-PRD crosswalk
+## Cylon RESURRECTION-HUB-PRD crosswalk
 
 | Hub PRD phase | Flintlock docs |
 |---|---|

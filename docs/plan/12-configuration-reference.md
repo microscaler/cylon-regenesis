@@ -30,7 +30,7 @@ Listen gRPC: `:50052` typical (Multipass bridge)
 
 See [06-regenesis-agent-spec.md](06-regenesis-agent-spec.md) — `/etc/regenesis/config.yaml`
 
-## Multipass / tiffany just
+## Multipass / cylon just
 
 | Recipe | Purpose |
 |---|---|
@@ -71,4 +71,4 @@ See [06-regenesis-agent-spec.md](06-regenesis-agent-spec.md) — `/etc/regenesis
 | resurrection-hub | 14000 |
 | portal | 5173 |
 
-See `tiffany/Tiltfile`, `cylon-local-infra`.
+See `cylon/Tiltfile`, `cylon-local-infra`.

@@ -29,7 +29,7 @@ Homogeneous nodes: running count tie-breaker. Heterogeneous (future): normalize 
 | N requests → N × fleet RPC | N requests → 1 bid round |
 | Leader CPU spike | Amortized scatter-gather |
 
-Target: 5000 req/s ([RESURRECTION-HUB-PRD](../../tiffany/docs/RESURRECTION-HUB-PRD.md) 3.1).
+Target: 5000 req/s ([RESURRECTION-HUB-PRD](../../cylon/docs/RESURRECTION-HUB-PRD.md) 3.1).
 
 ## Node-side bid calculation (cylon host extension)
 
@@ -51,5 +51,5 @@ Reject bid if request exceeds available.
 
 ## References
 
-- `tiffany/crates/resurrection-hub/src/allocator.rs`
+- `cylon/crates/resurrection-hub/src/allocator.rs`
 - Flintlock doc 02 sequence diagram

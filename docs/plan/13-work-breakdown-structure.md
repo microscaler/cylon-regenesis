@@ -69,7 +69,7 @@ Estimates: **S** ≤2d, **M** ≤1wk, **L** ≤2wk, **XL** >2wk
 | REG-CP-3.2 | Move resurrection-hub → regenesis-hub crate | M | 3.1 |
 | REG-CP-3.3 | Typed RegenesisCommand Raft refactor | XL | 3.2 |
 | REG-CP-3.4 | Tilt + K8s manifest update | M | 3.2 |
-| REG-CP-3.5 | Remove crate from tiffany workspace | S | 3.4 |
+| REG-CP-3.5 | Remove crate from cylon workspace | S | 3.4 |
 | REG-CP-3.6 | CI github actions nextest clippy | M | 3.2 |
 | REG-CP-3.7 | GET /v2/nodes + hibernate/resurrect HTTP | M | 3.2 |
 | REG-CP-3.8 | HTTP mTLS middleware | M | 3.2 |
@@ -82,15 +82,15 @@ Estimates: **S** ≤2d, **M** ≤1wk, **L** ≤2wk, **XL** >2wk
 |---|---|---|---|
 | REG-CP-4.1 | Hub offline reschedule integration tests | M | 3.2 |
 | REG-CP-4.2 | CryoSleep S3 GC background leader task | L | 3.2 |
-| REG-CP-4.3 | rejoin → DeleteCylonVm not UDS rm | M | tiffany |
+| REG-CP-4.3 | rejoin → DeleteCylonVm not UDS rm | M | cylon |
 | REG-CP-4.4 | SnapshotMetadata in Raft + S3 paths | L | 4.2 |
 | REG-CP-4.5 | Chaos suite iptables/kill pod | L | 4.1 |
 | REG-CP-4.6 | Host bid RPC or capacity refresh | M | 3.2 |
-| REG-CP-4.7 | Complete MigrateCylonVm pipe | XL | tiffany |
+| REG-CP-4.7 | Complete MigrateCylonVm pipe | XL | cylon |
 
 ---
 
-## Epic REG-HOST — Cylon host gaps (tiffany)
+## Epic REG-HOST — Cylon host gaps (cylon)
 
 | ID | Task | Est | Dep |
 |---|---|---|---|
@@ -129,5 +129,5 @@ REG-DCOPS-01 (parallel blocker for PXE E2E)
 
 - [ ] Code + tests merged
 - [ ] Plan doc updated if behavior changed
-- [ ] llmwiki log entry (tiffany or regenesis)
+- [ ] llmwiki log entry (cylon or regenesis)
 - [ ] Runbook step validated on ms02 where applicable

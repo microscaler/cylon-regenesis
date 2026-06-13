@@ -21,7 +21,7 @@ Leader-only background task:
 | Action | Deregister agent + delete S3 objects |
 | Override | Admin `POST /v2/agents/{id}/retain` |
 
-Acceptance: dormant agents purged; S3 usage drops ([RESURRECTION-HUB-PRD](../../tiffany/docs/RESURRECTION-HUB-PRD.md) 4.1).
+Acceptance: dormant agents purged; S3 usage drops ([RESURRECTION-HUB-PRD](../../cylon/docs/RESURRECTION-HUB-PRD.md) 4.1).
 
 ## Graceful migration (proposal 14)
 
@@ -39,5 +39,5 @@ Host reprovision **wipes local** `/var/lib/cylon/` VM state — agents must be h
 
 ## References
 
-- `tiffany/crates/resurrection-hub/Cargo.toml` (object_store)
+- `cylon/crates/resurrection-hub/Cargo.toml` (object_store)
 - Flintlock doc 14

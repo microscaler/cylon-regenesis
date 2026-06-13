@@ -1,6 +1,6 @@
 # 02 — Gap analysis: current state
 
-**As of 2026-06-13** — audited against `tiffany/crates/resurrection-hub`, `tiffany/crates/cylon`, `cylon-images/multipass/`, `DCops/`.
+**As of 2026-06-13** — audited against `cylon/crates/resurrection-hub`, `cylon/crates/cylon`, `cylon-images/multipass/`, `DCops/`.
 
 Legend: ✅ implemented | 🟡 partial | ❌ missing | 📋 spec only
 
@@ -25,7 +25,7 @@ Legend: ✅ implemented | 🟡 partial | ❌ missing | 📋 spec only
 | Auth on HTTP API | 11 | ❌ | No middleware; dev only |
 | 3-node HA deployment | 01 | 🟡 | Raft routes exist; Kind runs single pod |
 
-## Cylon host (`tiffany/crates/cylon`)
+## Cylon host (`cylon/crates/cylon`)
 
 | Capability | Status | Notes |
 |---|---|---|

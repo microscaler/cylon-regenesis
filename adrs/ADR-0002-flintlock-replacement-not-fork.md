@@ -8,7 +8,7 @@
 
 Microscaler submitted a [Flintlock distributed architecture enhancement proposal](../docs/proposals/README.md) to Liquid Metal (June 2025), choosing collaboration over forking. Operational reality: upstream velocity and CRP-specific semantics (agent resurrection, cylon-skills guest, CryoSleep snapshots) require **full control**.
 
-Tiffany [CRP PRD](../../tiffany/docs/CYLON-RESURRECTION-PLATFORM-PRD.md) §0 already maps Flintlock responsibilities to `crates/cylon` + `resurrection-hub`. **cylon-regenesis** consolidates the control plane and host regenesis into a dedicated repo.
+Cylon [CRP PRD](../../cylon/docs/CYLON-RESURRECTION-PLATFORM-PRD.md) §0 already maps Flintlock responsibilities to `crates/cylon` + `resurrection-hub`. **cylon-regenesis** consolidates the control plane and host regenesis into a dedicated repo.
 
 ## Decision
 

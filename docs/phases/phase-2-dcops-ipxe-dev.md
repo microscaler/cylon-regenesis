@@ -21,7 +21,7 @@ Build Ubuntu 24.04 autoinstall netboot artifacts:
 
 ```
 cylon-regenesis/images/host-os/ubuntu-24.04/
-├── build.sh (or Makefile — no shell scripts policy in tiffany; use just)
+├── build.sh (or Makefile — no shell scripts policy in cylon; use just)
 ├── autoinstall/user-data
 └── publish → pxe-server PVC
 ```

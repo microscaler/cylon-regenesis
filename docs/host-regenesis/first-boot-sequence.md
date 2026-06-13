@@ -75,14 +75,14 @@ chown cylon:cylon /home/cylon/cylon-images/vmlinux
 
 Same logic as `install-cylon-from-release` in `cylon-images/multipass/cloud-init.yaml`:
 
-- Download `cylon-linux-x86_64` + sha256 from Tiffany GitHub Releases (API asset URLs)
+- Download `cylon-linux-x86_64` + sha256 from Cylon GitHub Releases (API asset URLs)
 - Install `/usr/local/bin/cylon`
 
 ### 7. systemd unit
 
 Install `cylon-host.service` + `/etc/cylon/host.env` from templates or hub-provided bundle.
 
-Phase 1: copy from `tiffany/deployment-configuration/profiles/dev/resurrection-node/`.
+Phase 1: copy from `cylon/deployment-configuration/profiles/dev/resurrection-node/`.
 
 ### 8. Hub registration
 
@@ -151,4 +151,4 @@ Operator commits BootIntent `lifecycle: locked`.
 
 - [cloud-init-parity.md](cloud-init-parity.md)
 - `cylon-images/multipass/cloud-init.yaml`
-- `tiffany/deployment-configuration/profiles/dev/resurrection-node/`
+- `cylon/deployment-configuration/profiles/dev/resurrection-node/`

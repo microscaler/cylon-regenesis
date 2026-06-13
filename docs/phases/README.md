@@ -33,7 +33,7 @@ gantt
 
 | Stream | Can proceed independently |
 |---|---|
-| Host regenesis | Phase 1–2 while hub still in tiffany |
+| Host regenesis | Phase 1–2 while hub still in cylon |
 | Control plane | Phase 3–4 |
 | Guest images | cylon-images (always) |
 | DCops PXE HTTP | DCops crate maturity |
@@ -44,4 +44,4 @@ Each phase requires:
 
 1. Acceptance criteria in phase doc — all checked
 2. Runbook in phase doc — reviewed
-3. Tiffany llmwiki log entry (cross-repo)
+3. Cylon llmwiki log entry (cross-repo)

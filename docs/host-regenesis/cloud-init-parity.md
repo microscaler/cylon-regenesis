@@ -69,7 +69,7 @@ Items 23–25 are **beyond** current cloud-init — regenesis-agent adds them so
 ## Verification command (ms02)
 
 ```bash
-cd ~/Workspace/microscaler/tiffany
+cd ~/Workspace/microscaler/cylon
 just resurrection-nodes-status
 just resurrection-nodes-smoke-grpc
 ```

@@ -19,7 +19,7 @@
 
 - `provision-node` / `just provision-fleet` — `POST /v2/register` + health
 
-### 1.4 Tiffany integration
+### 1.4 Cylon integration
 
 - `just resurrection-nodes-finish-regenesis` → `cylon-regenesis just provision-fleet`
 - `resurrection-nodes-deploy-host-daemon` aliases finish-regenesis
@@ -43,7 +43,7 @@ cd ~/Workspace/microscaler/cylon-images/multipass
 just purge-base && just build-base
 cd ~/Workspace/microscaler/cylon-local-infra
 just resurrection-nodes-up
-cd ~/Workspace/microscaler/tiffany
+cd ~/Workspace/microscaler/cylon
 just resurrection-nodes-status
 ```
 

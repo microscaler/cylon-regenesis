@@ -1,7 +1,7 @@
 # Phase 3 — Control plane extraction
 
 **Depends on:** Phase 1 (functional agent path)  
-**Goal:** Move `tiffany/crates/resurrection-hub` → `cylon-regenesis/crates/regenesis-hub`.
+**Goal:** Move `cylon/crates/resurrection-hub` → `cylon-regenesis/crates/regenesis-hub`.
 
 ## Work items
 
@@ -24,15 +24,15 @@ Prefer `git filter-repo` or copy with attribution note in CHANGELOG — preserve
 
 | Option | Tradeoff |
 |---|---|
-| Path dep `../../tiffany/crates/cylon` | Simple dev |
+| Path dep `../../cylon/crates/cylon` | Simple dev |
 | Published `cylon-grpc` crate | Clean boundary |
 
 Document pin in ARCHITECTURE version matrix.
 
-### 3.4 Tiffany integration
+### 3.4 Cylon integration
 
 - Tilt builds `regenesis-hub` from cylon-regenesis path (Tiltfile change)
-- Remove duplicate crate from tiffany workspace OR re-export as dependency
+- Remove duplicate crate from cylon workspace OR re-export as dependency
 - Update `llmwiki` references
 
 ### 3.5 CI
@@ -47,12 +47,12 @@ Document pin in ARCHITECTURE version matrix.
 
 - [ ] Kind deployment uses cylon-regenesis image only
 - [ ] All existing resurrection-hub tests pass
-- [ ] Tiffany CI green with hub removed from workspace
-- [ ] No duplicate hub code in tiffany
+- [ ] Cylon CI green with hub removed from workspace
+- [ ] No duplicate hub code in cylon
 
 ## Rollback
 
-- Tilt pin back to tiffany crate path
+- Tilt pin back to cylon crate path
 - Single revert commit
 
 ## Next phase

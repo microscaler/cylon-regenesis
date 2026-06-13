@@ -1,6 +1,6 @@
 # Fault tolerance
 
-**Flintlock proposals 04, 05, 07, 09** — detailed in [RESURRECTION-HUB-PRD](../../tiffany/docs/RESURRECTION-HUB-PRD.md) Phase 2.
+**Flintlock proposals 04, 05, 07, 09** — detailed in [RESURRECTION-HUB-PRD](../../cylon/docs/RESURRECTION-HUB-PRD.md) Phase 2.
 
 ## 1. Node heartbeat and offline (04, 07)
 
@@ -20,7 +20,7 @@ Leader reschedules agents:
 
 ## 2. Detached host GC (05)
 
-Implemented on **cylon host** (tiffany), orchestrated by hub policy.
+Implemented on **cylon host** (cylon), orchestrated by hub policy.
 
 | Parameter | Value |
 |---|---|
@@ -70,4 +70,4 @@ Not cold reinstall — **Firecracker snapshot restore**:
 ## References
 
 - [first-boot-sequence.md](../host-regenesis/first-boot-sequence.md) — registration
-- `tiffany/crates/cylon/src/lifecycle.rs`
+- `cylon/crates/cylon/src/lifecycle.rs`

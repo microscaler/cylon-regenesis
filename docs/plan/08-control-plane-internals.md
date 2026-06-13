@@ -128,7 +128,7 @@ Restore procedure (runbook):
 1. Copy `crates/resurrection-hub` → `cylon-regenesis/crates/regenesis-hub`
 2. Rename package in Cargo.toml
 3. Update Tiltfile image build context
-4. Tiffany depends on git/path crate; remove local crate
+4. Cylon depends on git/path crate; remove local crate
 5. Run full integration test suite
 6. Update import paths in docs
 

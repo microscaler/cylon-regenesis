@@ -177,7 +177,7 @@ OpenAPI target: `openapi/regenesis-v2.yaml` (Phase 0b).
 
 ## gRPC — CylonService (host)
 
-Source: `tiffany/crates/cylon/proto/cylon.proto`
+Source: `cylon/crates/cylon/proto/cylon.proto`
 
 | RPC | Caller | Purpose |
 |---|---|---|

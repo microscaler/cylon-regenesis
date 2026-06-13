@@ -9,14 +9,14 @@ Microscaler-owned replacement for [Liquidmetal + Flintlock](https://github.com/l
 | Layer | Responsibility | Status |
 |---|---|---|
 | **Host regenesis** | iPXE provisioning, first-boot, secure Hub rejoin | **Phase 1** — [`scripts/regenesis-agent`](scripts/regenesis-agent) |
-| **Control plane** | Raft hub, scheduling, API v2, fault tolerance | Migrate from `tiffany/crates/resurrection-hub` |
+| **Control plane** | Raft hub, scheduling, API v2, fault tolerance | Migrate from `cylon/crates/resurrection-hub` |
 | **Contracts** | Hub ↔ host ↔ DCops integration specs | This repo |
 
 ## What lives elsewhere
 
 | Repo | Role |
 |---|---|
-| [`tiffany`](../tiffany/) | Cylon **host daemon** (`crates/cylon`), agent runtime, portal |
+| [`cylon`](../cylon/) | Cylon **host daemon** (`crates/cylon`), agent runtime, portal |
 | [`cylon-images`](../cylon-images/) | Firecracker **guest** kernel + OCI rootfs (GHCR) |
 | [`DCops`](../DCops/) | Datacenter GitOps — **iPXE, DHCP, IPAM** (not Tinkerbell) |
 | [`cylon-local-infra`](../cylon-local-infra/) | Kind, Tilt, operator runbooks |
@@ -34,7 +34,7 @@ Microscaler-owned replacement for [Liquidmetal + Flintlock](https://github.com/l
 
 ```bash
 # After multipass build-base (cylon-images/multipass)
-just provision-fleet    # nodes 1–3 from tiffany env + certs + hub register
+just provision-fleet    # nodes 1–3 from cylon env + certs + hub register
 
 # Or per node:
 just provision-node resurrection-node-1 1

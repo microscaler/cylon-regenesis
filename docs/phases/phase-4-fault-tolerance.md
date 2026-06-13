@@ -8,7 +8,7 @@
 | Item | Doc |
 |---|---|
 | Heartbeat + offline + reschedule | [fault-tolerance.md](../control-plane/fault-tolerance.md) |
-| Detached host watchdog | tiffany `crates/cylon` |
+| Detached host watchdog | cylon `crates/cylon` |
 | Rejoin reconciliation | `/v2/nodes/rejoin` |
 | Batch bidding | [scheduling-and-bidding.md](../control-plane/scheduling-and-bidding.md) |
 | Raft snapshots | [raft-consensus.md](../control-plane/raft-consensus.md) |

@@ -13,7 +13,7 @@ Portal HTTP
           → vsock guest (span: guest.vsock)
 ```
 
-Implementation: OpenTelemetry SDK in hub + cylon host ([RESURRECTION-HUB-PRD](../../tiffany/docs/RESURRECTION-HUB-PRD.md) 1.1).
+Implementation: OpenTelemetry SDK in hub + cylon host ([RESURRECTION-HUB-PRD](../../cylon/docs/RESURRECTION-HUB-PRD.md) 1.1).
 
 ## Metrics
 
@@ -58,5 +58,5 @@ Grafana boards (future):
 
 ## References
 
-- `tiffany/crates/resurrection-hub/`
+- `cylon/crates/resurrection-hub/`
 - DCops observability (separate)

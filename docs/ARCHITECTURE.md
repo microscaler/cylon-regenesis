@@ -16,7 +16,7 @@ CRP needs a **distributed Firecracker control plane** that:
 
 ```mermaid
 flowchart TB
-    subgraph Platform["tiffany (Kind)"]
+    subgraph Platform["cylon (Kind)"]
         Portal[Portal UI]
         Daemon[cylon-daemon platform]
     end
@@ -67,10 +67,10 @@ flowchart TB
 |---|---|---|
 | **L0 Datacenter** | DCops | IPAM, DHCP, iPXE delivery, BootIntent lifecycle |
 | **L1 Host regenesis** | regenesis-agent + host OS image | Install Cylon host, Firecracker, guest kernel, systemd |
-| **L2 Host runtime** | `tiffany/crates/cylon` | OCI→ext4, Firecracker UDS, vsock proxy, detached watchdog |
+| **L2 Host runtime** | `cylon/crates/cylon` | OCI→ext4, Firecracker UDS, vsock proxy, detached watchdog |
 | **L3 Control plane** | regenesis-hub | Raft, scheduling, API v2, resurrection orchestration |
-| **L4 Platform** | tiffany daemon + portal | Chat, executor, Postgres — not on resurrection nodes |
-| **L5 Guest** | cylon-images + tiffany-runtime | Agent loop inside microVM |
+| **L4 Platform** | cylon daemon + portal | Chat, executor, Postgres — not on resurrection nodes |
+| **L5 Guest** | cylon-images + cylon-runtime | Agent loop inside microVM |
 
 ## 4. Critical distinction: two kernels
 
@@ -83,7 +83,7 @@ Do not conflate DCops `BootProfile.kernel` (host boot) with GHCR guest `vmlinux`
 
 ## 5. Control plane — regenesis hub
 
-Migrates from `tiffany/crates/resurrection-hub`. Core subsystems:
+Migrates from `cylon/crates/resurrection-hub`. Core subsystems:
 
 ### 5.1 Raft state machine (Flintlock doc 01, 10)
 
@@ -159,7 +159,7 @@ See [host-regenesis/ipxe-provisioning.md](host-regenesis/ipxe-provisioning.md).
 | Component | Pin | Compatibility |
 |---|---|---|
 | regenesis-hub | semver from this repo | Requires `cylon.proto` ≥ X |
-| cylon host | Tiffany release tag (`/etc/cylon/release-pin`) | Matches hub gRPC schema |
+| cylon host | Cylon release tag (`/etc/cylon/release-pin`) | Matches hub gRPC schema |
 | Guest rootfs | `ghcr.io/microscaler/cylon-rootfs-ubuntu:latest` | Skills registry baked at CI |
 | Guest kernel | `ghcr.io/microscaler/cylon-kernel:6.1.102` | Firecracker 1.10.x |
 | Host OS image | `regenesis-host-ubuntu-24.04:<tag>` | regenesis-agent ≥ same tag |
@@ -178,9 +178,9 @@ See [host-regenesis/ipxe-provisioning.md](host-regenesis/ipxe-provisioning.md).
 ```
 cylon-regenesis/
 ├── crates/
-│   ├── regenesis-hub/      # migrate from tiffany
+│   ├── regenesis-hub/      # migrate from cylon
 │   ├── regenesis-agent/    # first-boot CLI
-│   └── regenesis-proto/    # optional — or depend on tiffany cylon crate
+│   └── regenesis-proto/    # optional — or depend on cylon host crate
 ├── ipxe/
 │   ├── cylon-resurrection.ipxe
 │   └── profiles/
