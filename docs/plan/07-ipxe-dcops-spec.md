@@ -21,7 +21,7 @@ Standard **iPXE** only. **DCops** orchestrates DHCP, HTTP, and GitOps intent. **
 └─────────────────────────────────────────────────────────┘
 ```
 
-ms02 dev: hub on Kind; pxe-server on DCops Kind; lab server same L2.
+ms02 dev: hub on Kind; DCops (NetBox, Kea, pxe-server) on shared `kind-kind`; lab server same L2.
 
 ---
 

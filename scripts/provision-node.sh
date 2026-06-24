@@ -18,7 +18,7 @@ fi
 source "${cylon_env}"
 rust_log="${RUST_LOG:-info}"
 
-cfg="$(mktemp)"
+cfg="${root}/.provision-${vm}.env"
 trap 'rm -f "${cfg}"' EXIT
 cat > "${cfg}" <<EOF
 REGENESIS_PROVISIONING=node
@@ -35,20 +35,21 @@ EOF
 
 just -f "${root}/justfile" install-to "${vm}"
 multipass transfer "${cfg}" "${vm}:/tmp/regenesis-node.env"
-multipass exec "${vm}" sudo mv /tmp/regenesis-node.env /etc/regenesis/config.env
+multipass exec "${vm}" -- sudo mv /tmp/regenesis-node.env /etc/regenesis/config.env
 
 if [[ -d "${certs_dir}" ]]; then
-  multipass exec "${vm}" sudo mkdir -p "${CYLON_CERTS_DIR}"
-  for f in ca.crt server.crt server.key hub-client.crt hub-client.key; do
+  multipass exec "${vm}" -- sudo mkdir -p "${CYLON_CERTS_DIR}"
+  multipass exec "${vm}" -- sudo chown cylon:cylon "${CYLON_CERTS_DIR}"
+  for f in ca.crt cylon-server.crt cylon-server.key hub-client.crt hub-client.key; do
     if [[ -f "${certs_dir}/${f}" ]]; then
       multipass transfer "${certs_dir}/${f}" "${vm}:/tmp/${f}"
-      multipass exec "${vm}" sudo install -m 600 "/tmp/${f}" "${CYLON_CERTS_DIR}/${f}"
-      multipass exec "${vm}" sudo rm -f "/tmp/${f}"
+      multipass exec "${vm}" -- sudo install -o cylon -g cylon -m 640 "/tmp/${f}" "${CYLON_CERTS_DIR}/${f}"
+      multipass exec "${vm}" -- sudo rm -f "/tmp/${f}"
     fi
   done
 fi
 
-multipass exec "${vm}" sudo env REGENESIS_CYLON_HOST_UNIT=/usr/local/share/regenesis/cylon-host.service \
+multipass exec "${vm}" -- sudo env REGENESIS_CYLON_HOST_UNIT=/usr/local/share/regenesis/cylon-host.service \
   /usr/local/bin/regenesis-agent --config /etc/regenesis/config.env --provisioning node --force
 
 echo "Node provisioning OK on ${vm} (${CYLON_NODE_ID})"

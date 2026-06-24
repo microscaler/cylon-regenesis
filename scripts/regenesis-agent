@@ -242,7 +242,7 @@ phase_certs() {
   if [[ ! -d "${REGENESIS_CERTS_DIR}" ]]; then
     die "CERTS_DIR missing: ${REGENESIS_CERTS_DIR}"
   fi
-  for f in ca.crt server.crt server.key; do
+  for f in ca.crt cylon-server.crt cylon-server.key; do
     [[ -f "${REGENESIS_CERTS_DIR}/${f}" ]] || die "missing cert: ${REGENESIS_CERTS_DIR}/${f}"
   done
   log "certs OK in ${REGENESIS_CERTS_DIR}"

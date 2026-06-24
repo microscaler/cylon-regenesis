@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["crates/multipass-controller"]
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "warn"
+unimplemented = "warn"
+too_many_lines = "warn"
+cognitive_complexity = "warn"

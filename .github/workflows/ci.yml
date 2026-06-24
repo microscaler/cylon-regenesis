@@ -1,26 +1,39 @@
-name: CI
+name: CI & Release
 
 on:
   push:
     branches: [main]
+    tags:
+      - "v*"
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create (e.g. v0.1.0). Required for workflow_dispatch."
+        required: false
+        type: string
+        default: ""
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate:
+  pipeline:
+    name: CI & Release Pipeline
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install tools
+      # -----------------------------------------------------------------
+      # 1. Script & Template Verification (CI)
+      # -----------------------------------------------------------------
+      - name: Install CI tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y shellcheck just
+          sudo apt-get install -y shellcheck
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | sudo bash -s -- --to /usr/local/bin
 
       - name: Verify VERSION matches regenesis-agent
         run: |
@@ -41,7 +54,10 @@ jobs:
         run: just --list
 
       - name: Verify systemd units
-        run: systemd-analyze verify systemd/*.service
+        run: |
+          sudo touch /usr/local/bin/cylon /usr/local/bin/regenesis-agent
+          sudo chmod +x /usr/local/bin/cylon /usr/local/bin/regenesis-agent
+          systemd-analyze verify systemd/*.service
 
       - name: Smoke test regenesis-agent CLI
         run: |
@@ -54,3 +70,99 @@ jobs:
           # shellcheck disable=SC1091
           set -a && source config/regenesis-base.env && set +a
           test -n "${REGENESIS_PROVISIONING:-}"
+
+      # -----------------------------------------------------------------
+      # 2. Rust Validation (Compilation, Lints, Tests)
+      # -----------------------------------------------------------------
+      - name: Set up Rust toolchain
+        run: |
+          if ! command -v rustup &> /dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          fi
+          # Source cargo env for the current step
+          . "$HOME/.cargo/env"
+          rustup update stable
+          rustup default stable
+          rustup component add clippy
+          # Add to GITHUB_PATH for subsequent steps
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Cargo Check
+        run: cargo check --workspace
+
+      - name: Cargo Clippy
+        run: cargo clippy --workspace --all-targets --all-features
+
+      - name: Cargo Test
+        run: cargo test --workspace
+
+      # -----------------------------------------------------------------
+      # 3. Packaging & Publishing (Release - Conditional)
+      # -----------------------------------------------------------------
+      - name: Check if release should run
+        id: release_check
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* || "${{ github.event.inputs.tag }}" != "" ]]; then
+            echo "run_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify VERSION matches tag
+        if: steps.release_check.outputs.run_release == 'true'
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "push" ]; then
+            tag="${GITHUB_REF#refs/tags/}"
+          else
+            tag="${{ github.event.inputs.tag }}"
+          fi
+          tag_ver="${tag#v}"
+          file_ver="$(tr -d '[:space:]' < VERSION)"
+          script_ver="$(grep '^VERSION=' scripts/regenesis-agent | sed -n 's/^VERSION="\(.*\)"$/\1/p')"
+          if [[ "${tag_ver}" != "${file_ver}" || "${file_ver}" != "${script_ver}" ]]; then
+            echo "Tag (${tag_ver}), VERSION (${file_ver}), and script (${script_ver}) must match" >&2
+            exit 1
+          fi
+
+      - name: Package release artifacts
+        if: steps.release_check.outputs.run_release == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p dist/systemd dist/config
+          install -m 0755 scripts/regenesis-agent dist/regenesis-agent-linux-x86_64
+          install -m 0644 systemd/cylon-host.service dist/systemd/
+          install -m 0644 systemd/regenesis-agent.service dist/systemd/
+          install -m 0644 config/regenesis-base.env dist/config/
+          install -m 0644 ipxe/cylon-resurrection.ipxe dist/
+          (cd dist && sha256sum regenesis-agent-linux-x86_64 > regenesis-agent-linux-x86_64.sha256)
+
+      - name: Resolve release tag
+        if: steps.release_check.outputs.run_release == 'true'
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: steps.release_check.outputs.run_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          draft: false
+          prerelease: ${{ contains(steps.meta.outputs.tag, '-') }}
+          generate_release_notes: true
+          target_commitish: ${{ github.sha }}
+          files: |
+            dist/regenesis-agent-linux-x86_64
+            dist/regenesis-agent-linux-x86_64.sha256
+            dist/cylon-resurrection.ipxe
+            dist/systemd/cylon-host.service
+            dist/systemd/regenesis-agent.service
+            dist/config/regenesis-base.env
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

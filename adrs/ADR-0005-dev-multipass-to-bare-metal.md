@@ -40,7 +40,7 @@ Documented in [cloud-init-parity.md](../docs/host-regenesis/cloud-init-parity.md
 ## Consequences
 
 - Two provisioning paths maintained until Phase 3 cutover.
-- iPXE testing requires DCops Kind cluster on ms02 (already present for DCops dev).
+- iPXE testing requires DCops on the shared Kind cluster on ms02 (`kind-kind`; see `DCops/AGENTS.md`).
 
 ## References
 

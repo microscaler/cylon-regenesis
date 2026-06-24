@@ -7,7 +7,7 @@
 
 | Prerequisite | Owner |
 |---|---|
-| DCops Kind cluster on ms02 | DCops |
+| DCops on shared Kind cluster (`kind-kind`) on ms02 | DCops — `just dev-up` in `DCops/` |
 | pxe-server HTTP serving boot files | DCops `crates/pxe-server` |
 | Kea DHCP on lab VLAN OR DHCP relay | DCops Phase 2 |
 | NetBox MAC for lab server | DCops |
