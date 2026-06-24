@@ -1,8 +1,9 @@
 # 🧬 Cylon Regenesis
 
-**Zero-Trust Infrastructure Regenesis and Declarative Hypervisor Control Plane for the Cylon Resurrection Platform (CRP)**
+**Zero-Trust Infrastructure Regenesis and Declarative Hypervisor Control Plane for the Cognitive Yielding Logic Orchestration Network (CYLON) Resurrection Platform**
 
-`cylon-regenesis` is the foundational infrastructure orchestrator and host manager for the Cylon Resurrection Platform. It manages the lifecycle of physical and virtual resurrection nodes (hosts for Firecracker microVMs), ensuring that they are dynamically provisioned, securely integrated into the consensus cluster, and healed of configuration drift.
+`cylon-regenesis` is the foundational infrastructure orchestrator and host manager for the CYLON Resurrection Platform. It manages the lifecycle of physical and virtual resurrection nodes (hosts for Firecracker microVMs), ensuring that they are dynamically provisioned, securely integrated into the consensus cluster, and healed of configuration drift.
+
 
 ---
 
