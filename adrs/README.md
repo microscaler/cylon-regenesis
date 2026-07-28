@@ -4,12 +4,13 @@ ADRs record **locked decisions** for cylon-regenesis. Status values: Proposed | 
 
 | ADR | Title | Status |
 |---|---|---|
-| [ADR-0001](ADR-0001-scope-and-non-goals.md) | Scope & non-goals | Accepted |
-| [ADR-0002](ADR-0002-flintlock-replacement-not-fork.md) | Flintlock replacement, not fork | Accepted |
+| [ADR-0001](ADR-0001-scope-and-non-goals.md) | Scope & non-goals | Superseded by ADR-0007 |
+| [ADR-0002](ADR-0002-flintlock-replacement-not-fork.md) | Flintlock replacement, not fork | Superseded by ADR-0007 |
 | [ADR-0003](ADR-0003-ipxe-via-dcops-not-tinkerbell.md) | Standard iPXE via DCops | Accepted |
-| [ADR-0004](ADR-0004-repo-boundaries.md) | Repo boundaries (cylon / images / DCops) | Accepted |
-| [ADR-0005](ADR-0005-dev-multipass-to-bare-metal.md) | Multipass dev → bare-metal prod path | Accepted |
-| [ADR-0006](ADR-0006-planning-baseline-code-audit.md) | Planning baseline — code audit snapshot | Accepted |
+| [ADR-0004](ADR-0004-repo-boundaries.md) | Repo boundaries (cylon / images / DCops) | Superseded by ADR-0007 |
+| [ADR-0005](ADR-0005-dev-multipass-to-bare-metal.md) | Multipass dev → bare-metal prod path | Superseded by ADR-0007 |
+| [ADR-0006](ADR-0006-planning-baseline-code-audit.md) | Planning baseline — code audit snapshot | Superseded by ADR-0007 |
+| [ADR-0007](ADR-0007-deprecate-in-favour-of-aether-native-kvm.md) | Deprecate in favour of Aether native KVM | Accepted |
 
 ## Process
 

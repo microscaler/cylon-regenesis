@@ -1,10 +1,15 @@
 # Documentation index
 
+> **Historical documentation:** this repository is deprecated in favour of
+> Aether native KVM. These plans are retained for provenance, not execution.
+> Start with [DEPRECATION.md](DEPRECATION.md).
+
 ## Start here
 
 | Document | Purpose |
 |---|---|
-| **[plan/MASTER-PLAN.md](plan/MASTER-PLAN.md)** | **Excruciating-detail implementation plan (15 docs)** |
+| **[DEPRECATION.md](DEPRECATION.md)** | **Current ownership and archive plan** |
+| [plan/MASTER-PLAN.md](plan/MASTER-PLAN.md) | Historical implementation plan (do not execute) |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System design, data flows, component diagram |
 | [PRD.md](PRD.md) | Product requirements, acceptance criteria, phase index |
 | [REPO-MAP.md](REPO-MAP.md) | Sibling repos, ownership, dependency arrows |
